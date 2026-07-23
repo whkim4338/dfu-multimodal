@@ -1,3 +1,7 @@
+# "Torch not compiled with CUDA enabled" 에러 발생 시
+# `nvidia-smi`로 드라이버가 지원하는 CUDA 버전을 확인한 뒤(예: 12.6) 아래처럼 먼저 설치:
+#   pip install torch torchvision --index-url https://download.pytorch.org/whl/cu126
+# 그 다음 이 requirements.txt를 설치하면 이미 깔린 torch/torchvision은 그대로 두고 나머지만 채운다.
 torch
 torchvision
 transformers>=4.56

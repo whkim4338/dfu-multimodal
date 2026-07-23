@@ -7,6 +7,8 @@ assets/
 # 학습 산출물 (체크포인트, embedding 캐시, CatBoost 학습 로그) — 로컬에서만 필요
 checkpoints/
 *.parquet
+*.log
+*.pt
 catboost_info/
 
 # Python
@@ -16,3 +18,7 @@ __pycache__/
 
 # 프로젝트 계획서
 Project.md
+
+# 가상환경
+venv/
+.venv/
