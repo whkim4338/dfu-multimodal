@@ -33,10 +33,6 @@ DFU(당뇨발궤양) 이미지 + 임상 데이터 멀티모달 모델. `--fusion
 
 ## Quick Start
 
-```bat
-cd D:\dfu\multimodal\dfu_multimodal
-```
-
 **1. 환경 설치**
 
 ```bat
