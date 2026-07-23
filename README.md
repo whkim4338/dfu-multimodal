@@ -34,63 +34,62 @@ DFU(당뇨발궤양) 이미지 + 임상 데이터 멀티모달 모델. `--fusion
 
 ```
 dfu_multimodal/
-├── Project.md                      # 설계 문서 (단계별 구현 계획, 아키텍처 결정 배경)
-├── README.md                       # 이 문서
+├── README.md                   
 ├── requirements.txt
 ├── train_fusion.py                 # 학습 진입점 — --fusion-strategy로 neural/gbdt 분기
 │
-├── dataset/                        # ★ clinical CSV + 이미지. git에는 CSV만 커밋됨
+├── dataset/                        # ★ clinical CSV + 이미지. git에는 CSV만
 │   ├── model_input_variables_full.csv
 │   ├── model_input_variables_required.csv
-│   └── toy_image_dataset/          #   .gitignore 처리됨 — "데이터 준비" 절의 다운로드 링크로 받을 것
+│   └── toy_image_dataset/          # "데이터 준비" 절의 다운로드 링크로 받을 것
 │
 ├── assets/
 │   └── dinov3-hf/                  # 로컬 DINOv3 HF 스냅샷 (config.json, model.safetensors, ...)
-│                                    # .gitignore 처리됨 — "DINOv3 에셋 준비" 절 참고
+│                                    # "DINOv3 에셋 준비" 절 참고
 │
-├── config.py                       # ImageEncoderConfig (DINOv3 인코더 설정)
+├── config.py                       
 │
 ├── cli/
-│   └── fusion_args.py              # 전체 CLI 인자 정의 (--fusion-strategy 포함)
+│   └── fusion_args.py              
 │
 ├── data/
-│   ├── clinical_loader.py          # raw CSV 로딩 (id/visit/img2d/라벨 컬럼 검증)
+│   ├── clinical_loader.py          # raw CSV 로딩 
 │   ├── clinical_transform.py       # clinical feature 표준화 + median 대체 + 결측 flag
-│   │                                # (반드시 train split에서만 fit — leakage 방지)
+│   │                         
 │   ├── image_dataset.py            # image_root/{id}/{visit}/{파일명} 구조 Dataset
 │   ├── embedding_cache.py          # DINOv3 embedding을 (id, visit, img2d) 키로 parquet 캐싱
 │   ├── fusion_dataset.py           # neural 경로(concat/gated) 전용 Dataset/collate
 │   └── (gbdt 경로는 clinical_transform을 거치지 않고 raw 값을 그대로 씀 — 아래 참고)
 │
 ├── models/
-│   ├── dinov3_backbone.py          # frozen DINOv3ViTModel wrapper (CLS+mean-pool patch concat)
-│   ├── image_projection.py         # 768d 이미지 embedding -> 256d
-│   ├── clinical_mlp.py             # clinical feature -> 256d (2-layer MLP)
-│   ├── coral_head.py               # Wagner용 rank-consistent ordinal head (Cao et al., 2020)
+│   ├── dinov3_backbone.py          # frozen DINOv3ViTModel wrapper 
+│   ├── image_projection.py         
+│   ├── clinical_mlp.py            
+│   ├── coral_head.py               # Wagner용 rank-consistent ordinal head 
 │   ├── fusion_model.py             # DFUMultimodalModel — image/clinical branch + fusion + heads
-│   └── fusion_strategies/          # ★ fusion 방식 레지스트리 — 여기가 확장 포인트
-│       ├── base.py                 #   FusionStrategy 추상 인터페이스
-│       ├── concat_fusion.py        #   concat -> Linear -> ReLU -> Dropout
-│       ├── gated_fusion.py         #   branch별 LayerNorm -> 게이트로 재가중 -> Linear
-│       └── __init__.py             #   FUSION_STRATEGIES = {"concat": ..., "gated": ...}
+│   └── fusion_strategies/          # ★ fusion 방식 레지스트리
+│       ├── base.py                 
+│       ├── concat_fusion.py        
+│       ├── gated_fusion.py        
+│       └── __init__.py            
 │
 ├── trainers/
-│   ├── common.py                   # FusionTrainerArgs + split_by_group (전략 공통 진입점)
-│   ├── losses.py                   # MultiTaskLoss (CORAL + masked BCE)
+│   ├── common.py                   # 전략 공통 진입점
+│   ├── losses.py                 
 │   ├── metrics.py                  # classification_metrics — neural/gbdt 공통 평가 스키마
-│   └── neural_trainer.py           # concat/gated 학습 루프, 체크포인트 저장/로딩
+│   └── neural_trainer.py           # concat/gated 학습 루프
 │
 ├── gbdt/                           # GBDT 경로 — neural과 완전히 별도인 파이프라인
-│   ├── tasks.py                   #   TaskSpec + 7개 태스크 정의
+│   ├── tasks.py                   
 │   ├── tabular_builder.py         #   clinical raw feature + image embedding -> flat feature 목록
 │   └── gbdt_trainer.py            #   CatBoost/XGBoost/LightGBM 공통 인터페이스, 태스크별 독립 학습
 │
-└── tests/
-    ├── mock_backbone.py           # 실제 가중치 없이 DINOv3ViTModel을 작은 랜덤 설정으로 생성
-    ├── synthetic_data.py          # smoke test가 공유하는 합성 데이터/mock encoder 헬퍼
-    ├── test_concat_fusion_smoke.py  # concat + 공통 데이터 인프라(이미지 로딩/캐시/split)
-    ├── test_gated_fusion_smoke.py   # gated 고유 동작(게이트 gradient 등)
-    └── test_gbdt_fusion_smoke.py    # gbdt 고유 동작 + "전략 간 동일 split" 검증
+└── tests/                          # 모의 test 코드 - 실제 가중치/데이터 없이 실행 가능
+    ├── mock_backbone.py           
+    ├── synthetic_data.py          
+    ├── test_concat_fusion_smoke.py  
+    ├── test_gated_fusion_smoke.py   
+    └── test_gbdt_fusion_smoke.py    
 ```
 
 ## 설치
