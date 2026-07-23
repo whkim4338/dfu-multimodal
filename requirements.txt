@@ -1,0 +1,16 @@
+torch
+torchvision
+transformers>=4.56
+scikit-learn
+pandas
+numpy
+pillow
+pyarrow
+
+# --fusion-strategy gbdt 전용 (--gbdt-backend로 선택)
+catboost
+xgboost
+lightgbm
+
+# 개발/테스트 전용
+pytest

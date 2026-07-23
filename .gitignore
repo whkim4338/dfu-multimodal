@@ -1,0 +1,18 @@
+# 대용량 이미지 데이터 — Google Drive에서 받아서 로컬에만 둔다 (README.md "데이터 준비" 참고)
+dataset/toy_image_dataset/
+
+# DINOv3 로컬 HF 스냅샷 — 대용량 바이너리라 git에 커밋하지 않는다 (README.md "DINOv3 에셋 준비" 참고)
+assets/
+
+# 학습 산출물 (체크포인트, embedding 캐시, CatBoost 학습 로그) — 로컬에서만 필요
+checkpoints/
+*.parquet
+catboost_info/
+
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# 프로젝트 계획서
+Project.md
